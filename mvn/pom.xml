@@ -1,0 +1,88 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
+
+  <groupId>com.googlecode.jamr</groupId>
+  <artifactId>jamr-parent</artifactId>
+  <packaging>pom</packaging>
+  <name>jamr Parent Pom</name>
+  <version>0.1</version>
+  <description>Java Automated Meter Reading</description>
+  <url>http://jamr.googlecode.com</url>
+  <licenses>
+    <license>
+      <name>(L)GPLv3</name>
+      <url>http://www.gnu.org/licenses/</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:svn:http://jamr.googlecode.com/svn/trunk/</connection>
+    <developerConnection>scm:svn:https://jamr.googlecode.com/svn/trunk/</developerConnection>
+    <url>http://jamr.googlecode.com/svn/trunk/</url>
+  </scm>
+  <developers>
+    <developer>
+      <name>Stephen More</name>
+      <email>stephen.more@gmail.com</email>
+    </developer>
+  </developers>
+
+  <modules>
+     <module>jamr-core</module>
+     <module>plug-stdout</module>
+  </modules>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.6.1</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+        <plugin>
+            <groupId>com.mycila.maven-license-plugin</groupId>
+            <artifactId>maven-license-plugin</artifactId>
+            <configuration>
+                <header>src/main/resources/license.txt</header>
+            </configuration>
+            <executions>
+                <execution>
+                    <phase>compile</phase>
+                    <goals>
+                        <goal>format</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+
+	<plugin>
+           <groupId>com.googlecode.maven-java-formatter-plugin</groupId>
+           <artifactId>maven-java-formatter-plugin</artifactId>
+           <executions>
+             <execution>
+               <goals>
+                 <goal>format</goal>
+               </goals>
+             </execution>
+           </executions>
+        </plugin>
+     </plugins>
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+</project>
