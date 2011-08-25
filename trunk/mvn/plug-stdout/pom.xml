@@ -1,0 +1,25 @@
+ <project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.googlecode.jamr</groupId>
+    <artifactId>jamr-parent</artifactId>
+    <version>0.1</version>
+  </parent>
+
+  <groupId>com.googlecode.jamr</groupId>
+  <artifactId>plug-stdout</artifactId>
+  <packaging>jar</packaging>
+  <name>jamr plugin stdout</name>
+  <version>0.1</version>
+  <description>Simple plugin to jamr core</description>
+
+
+  <dependencies>
+    <dependency>
+       <groupId>com.googlecode.jamr</groupId>
+       <artifactId>jamr-core</artifactId>
+       <version>0.1</version>
+    </dependency>
+   </dependencies>
+</project>

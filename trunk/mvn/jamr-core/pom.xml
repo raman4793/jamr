@@ -1,0 +1,16 @@
+ <project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.googlecode.jamr</groupId>
+    <artifactId>jamr-parent</artifactId>
+    <version>0.1</version>
+  </parent>
+
+  <groupId>com.googlecode.jamr</groupId>
+  <artifactId>jamr-core</artifactId>
+  <packaging>jar</packaging>
+  <name>jamr core</name>
+  <version>0.1</version>
+  <description>The core of jamr into which all other plugins plug into</description>
+</project>
