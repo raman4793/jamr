@@ -17,13 +17,25 @@
  * along with jamr.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * License
- */
+package com.googlecode.jamr;
 
-package com.googlecode.jamr.spi;
+public class JamrConfig {
+	private java.util.Hashtable functions;
+	private java.util.Hashtable operators;
 
-public interface Outlet {
-	void received(
-			com.googlecode.jamr.model.EncoderReceiverTransmitterMessage message);
+	public java.util.Hashtable getFunctions() {
+		return functions;
+	}
+
+	public void setFunctions(java.util.Hashtable f) {
+		this.functions = f;
+	}
+
+	public java.util.Hashtable getOperators() {
+		return operators;
+	}
+
+	public void setOperators(java.util.Hashtable o) {
+		this.operators = o;
+	}
 }
