@@ -1,0 +1,37 @@
+ <project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.googlecode.jamr</groupId>
+    <artifactId>jamr-parent</artifactId>
+    <version>0.1</version>
+  </parent>
+
+  <groupId>com.googlecode.jamr</groupId>
+  <artifactId>plug-pachube</artifactId>
+  <packaging>jar</packaging>
+  <name>jamr plugin pachube</name>
+  <version>0.1</version>
+  <description>Pachube plugin to jamr core</description>
+
+
+  <dependencies>
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+      <version>2.0</version>
+    </dependency>
+
+    <dependency>
+       <groupId>org.apache.httpcomponents</groupId>
+       <artifactId>httpclient</artifactId>
+       <version>4.1.1</version>
+    </dependency>
+
+    <dependency>
+       <groupId>com.googlecode.jamr</groupId>
+       <artifactId>jamr-core</artifactId>
+       <version>0.1</version>
+    </dependency>
+   </dependencies>
+</project>

@@ -1,0 +1,62 @@
+ <project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.googlecode.jamr</groupId>
+    <artifactId>jamr-parent</artifactId>
+    <version>0.1</version>
+  </parent>
+
+  <groupId>com.googlecode.jamr</groupId>
+  <artifactId>jamr-cli</artifactId>
+  <packaging>jar</packaging>
+  <name>jamr cli</name>
+  <version>0.1</version>
+  <description>jamr command line interface</description>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>0.9.29</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.googlecode.jamr</groupId>
+      <artifactId>plug-pachube</artifactId>
+      <version>0.1</version>
+    </dependency>
+
+    <dependency>
+       <groupId>com.googlecode.jamr</groupId>
+       <artifactId>jamr-core</artifactId>
+       <version>0.1</version>
+    </dependency>
+
+    <dependency>
+       <groupId>urbanophile</groupId>
+       <artifactId>java-getopt</artifactId>
+       <version>1.0.9</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+     <plugins>
+        <plugin>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-assembly-plugin</artifactId>
+           <configuration>
+	      <descriptorRefs>
+	         <descriptorRef>jar-with-dependencies</descriptorRef>
+	      </descriptorRefs>
+	      <archive>
+	         <manifest>
+		    <mainClass>com.googlecode.jamr.App</mainClass>
+	         </manifest>
+	      </archive>
+           </configuration>
+        </plugin>
+     </plugins>
+  </build>
+</project>
