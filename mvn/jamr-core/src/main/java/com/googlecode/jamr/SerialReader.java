@@ -57,6 +57,9 @@ public class SerialReader implements SerialPortEventListener {
 			java.io.PrintWriter pw = new java.io.PrintWriter(sw);
 			fnfe.printStackTrace(pw);
 			log.error(sw.toString());
+
+			// TODO install an empty config ??
+			jc = new JamrConfig();
 		}
 	}
 
@@ -81,7 +84,7 @@ public class SerialReader implements SerialPortEventListener {
 			if (matcher.matches()) {
 				String message = matcher.group(1);
 				String checksum = matcher.group(2);
-				log.trace("Match: " + message + " checksum: " + checksum);
+				log.debug("Match: " + message + " checksum: " + checksum);
 
 				if (valid(message, checksum)) {
 					OutletService os = OutletService.getInstance();
@@ -90,6 +93,7 @@ public class SerialReader implements SerialPortEventListener {
 
 					if ((messageType.equals("UMSCM"))
 							|| (messageType.equals("UMSCP"))) {
+						log.trace("UMS Message");
 						com.googlecode.jamr.model.StandardConsumptionMessage scm = new com.googlecode.jamr.model.StandardConsumptionMessage(
 								parts);
 						com.googlecode.jamr.model.StandardConsumptionMessage customMessage = null;
@@ -170,7 +174,7 @@ public class SerialReader implements SerialPortEventListener {
 									os.received(customMessage);
 								}
 							} else {
-								log.debug("Nothing has changed");
+								log.trace("Nothing has changed");
 								java.util.Calendar cal = java.util.Calendar
 										.getInstance();
 								cal.add(java.util.Calendar.MINUTE, -5);

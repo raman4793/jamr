@@ -32,7 +32,7 @@ public class OutletService {
 	}
 
 	public static synchronized OutletService getInstance() {
-		log.debug("getInstance");
+		log.trace("getInstance");
 		if (service == null) {
 			service = new OutletService();
 		}
