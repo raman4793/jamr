@@ -56,8 +56,8 @@ public class PachubePlug implements com.googlecode.jamr.spi.Outlet {
 			com.googlecode.jamr.model.EncoderReceiverTransmitterMessage ert) {
 		log.trace("received");
 		String serial = ert.getSerial();
-		log.debug("serial: " + serial + " deltaSeconds: "
-				+ ert.getDeltaSeconds() + " deltaReading: "
+		log.info("serial: " + serial + " reading: " + ert.getReading()
+				+ " deltaSeconds: " + ert.getDeltaSeconds() + " deltaReading: "
 				+ ert.getDeltaReading());
 
 		if (pc.getStreams() != null) {
