@@ -35,7 +35,7 @@ public class SerialReader implements SerialPortEventListener {
 	private java.util.regex.Pattern pattern = java.util.regex.Pattern
 			.compile("^\\$(.*)\\*(.*)\\r$");
 
-	private JamrConfig jc;
+	private Config jc;
 
 	public SerialReader(java.io.InputStream in) {
 		log.trace("init");
@@ -50,8 +50,8 @@ public class SerialReader implements SerialPortEventListener {
 		java.io.File file = new java.io.File(home + "/.jamr/config");
 		try {
 			java.io.FileInputStream fis = new java.io.FileInputStream(file);
-			jc = (JamrConfig) xstream.fromXML(fis);
-			log.trace("JamrConfig loaded");
+			jc = (Config) xstream.fromXML(fis);
+			log.trace("Config loaded");
 		} catch (java.io.FileNotFoundException fnfe) {
 			java.io.StringWriter sw = new java.io.StringWriter();
 			java.io.PrintWriter pw = new java.io.PrintWriter(sw);
@@ -59,7 +59,7 @@ public class SerialReader implements SerialPortEventListener {
 			log.error(sw.toString());
 
 			// TODO install an empty config ??
-			jc = new JamrConfig();
+			jc = new Config();
 		}
 	}
 
@@ -87,7 +87,6 @@ public class SerialReader implements SerialPortEventListener {
 				log.debug("Match: " + message + " checksum: " + checksum);
 
 				if (valid(message, checksum)) {
-					OutletService os = OutletService.getInstance();
 					String parts[] = message.split(",");
 					String messageType = parts[0];
 
@@ -96,101 +95,7 @@ public class SerialReader implements SerialPortEventListener {
 						log.trace("UMS Message");
 						com.googlecode.jamr.model.StandardConsumptionMessage scm = new com.googlecode.jamr.model.StandardConsumptionMessage(
 								parts);
-						com.googlecode.jamr.model.StandardConsumptionMessage customMessage = null;
-
-						String serial = scm.getSerial();
-
-						String functionName = null;
-						java.util.Hashtable opers = jc.getOperators();
-						if (opers != null) {
-							log.trace("Operators != null");
-							functionName = (String) opers.get(serial);
-						} else {
-							log.trace("Operators is null");
-						}
-
-						String function = null;
-						if (functionName != null) {
-							function = (String) jc.getFunctions().get(
-									functionName);
-							if (function != null) {
-								String custom = evaluate(function, scm
-										.getReading());
-								log.trace("Custom: " + custom);
-								if (!custom.equals("")) {
-									customMessage = new com.googlecode.jamr.model.StandardConsumptionMessage(
-											parts);
-									customMessage.setSerial(customMessage
-											.getSerial()
-											+ "-" + functionName);
-									customMessage
-											.setReading(new java.math.BigDecimal(
-													custom));
-								}
-							}
-						}
-
-						Object test = lastReading.get(serial);
-						if (test == null) {
-							log.trace("Nothing in history - sending");
-							os.received(scm);
-							lastReading.put(serial, scm);
-							if (customMessage != null) {
-								log
-										.trace("Nothing in history - sending custom");
-								os.received(customMessage);
-							}
-						} else {
-							com.googlecode.jamr.model.StandardConsumptionMessage old = (com.googlecode.jamr.model.StandardConsumptionMessage) test;
-
-							//getTime returns miliseconds
-							scm.setDeltaReading(scm.getReading().subtract(
-									old.getReading()));
-							scm.setDeltaSeconds((scm.getDate().getTime() - old
-									.getDate().getTime()) / 1000);
-
-							if (customMessage != null) {
-								String custom = evaluate(function, old
-										.getReading());
-								customMessage
-										.setDeltaReading(customMessage
-												.getReading()
-												.subtract(
-														new java.math.BigDecimal(
-																custom)));
-								customMessage.setDeltaSeconds((customMessage
-										.getDate().getTime() - old.getDate()
-										.getTime()) / 1000);
-							}
-
-							if (!old.getReading().equals(scm.getReading())) {
-								log
-										.trace("This reading does not match old reading - sending");
-								os.received(scm);
-								lastReading.put(serial, scm);
-								if (customMessage != null) {
-									log
-											.trace("This reading does not match old reading - sending custom");
-									os.received(customMessage);
-								}
-							} else {
-								log.trace("Nothing has changed");
-								java.util.Calendar cal = java.util.Calendar
-										.getInstance();
-								cal.add(java.util.Calendar.MINUTE, -5);
-								if (cal.getTime().after(scm.getDate())) {
-									// 5 minutes seem like a good period
-									log.trace("Nothing has changed - sending");
-									os.received(scm);
-									lastReading.put(serial, scm);
-									if (customMessage != null) {
-										log
-												.trace("Nothing has changed - sending custom");
-										os.received(customMessage);
-									}
-								}
-							}
-						}
+						evaluateAndDeliver(scm);
 					} else if ((messageType.equals("UMIDM"))
 							|| (messageType.equals("UMIDP"))) {
 						log.warn("UMIDM and UMIDP not yet implemented");
@@ -206,21 +111,108 @@ public class SerialReader implements SerialPortEventListener {
 							log.error(sw.toString());
 						}
 					}
+
 				} else {
 					log.error("Checksum error: " + line);
 				}
 			} else {
 				log.error("No match: " + line);
 			}
-		} catch (java.io.IOException ioe) {
+		} catch (Exception e) {
 			java.io.StringWriter sw = new java.io.StringWriter();
 			java.io.PrintWriter pw = new java.io.PrintWriter(sw);
-			ioe.printStackTrace(pw);
+			e.printStackTrace(pw);
 			log.error(sw.toString());
 		}
 	}
 
-	private String evaluate(String s, java.math.BigDecimal reading) {
+	private void evaluateAndDeliver(
+			com.googlecode.jamr.model.StandardConsumptionMessage raw) {
+
+		// Send the original
+		com.googlecode.jamr.model.StandardConsumptionMessage scm = checkHistory(raw);
+
+		// Calculate custom feeds
+		String serial = scm.getSerial();
+		java.util.Hashtable opers = jc.getOperators();
+		if (opers != null) {
+			log.trace("Operators != null");
+			if (opers.get(serial) != null) {
+				java.util.List meterOperators = (java.util.List) opers
+						.get(serial);
+				log.trace("Size of meterOperators: " + meterOperators.size());
+
+				for (int x = 0; x < meterOperators.size(); x++) {
+					String functionName = (String) meterOperators.get(x);
+					String function = (String) jc.getFunctions().get(
+							functionName);
+					if (function != null) {
+						String custom = evaluate(function, scm);
+						log.debug("Custom: " + functionName + " " + custom);
+						try {
+							com.googlecode.jamr.model.StandardConsumptionMessage customMessage = new com.googlecode.jamr.model.StandardConsumptionMessage();
+							customMessage.setSerial(scm.getSerial() + "-"
+									+ functionName);
+							customMessage.setReading(new java.math.BigDecimal(
+									custom));
+
+							checkHistory(customMessage);
+						} catch (java.lang.NumberFormatException nfe) {
+							java.io.StringWriter sw = new java.io.StringWriter();
+							java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+							nfe.printStackTrace(pw);
+							log.trace(sw.toString());
+						}
+					}
+				}
+			}
+		} else {
+			log.trace("Operators is null");
+		}
+
+	}
+
+	private com.googlecode.jamr.model.StandardConsumptionMessage checkHistory(
+			com.googlecode.jamr.model.StandardConsumptionMessage scm) {
+
+		log.trace("Checking History: " + scm.getSerial());
+		String serial = scm.getSerial();
+		OutletService os = OutletService.getInstance();
+		com.googlecode.jamr.model.StandardConsumptionMessage old = (com.googlecode.jamr.model.StandardConsumptionMessage) lastReading
+				.get(serial);
+		if (old == null) {
+			log.trace("Nothing in history - sending");
+			os.received(scm);
+			lastReading.put(serial, scm);
+		} else {
+			//getTime returns miliseconds
+			scm.setDeltaReading(scm.getReading().subtract(old.getReading()));
+			scm.setDeltaSeconds((scm.getDate().getTime() - old.getDate()
+					.getTime()) / 1000);
+
+			if (!old.getReading().equals(scm.getReading())) {
+				log.trace("This reading does not match old reading - sending");
+				os.received(scm);
+				lastReading.put(serial, scm);
+			} else {
+				log.trace("Nothing has changed");
+				java.util.Calendar cal = java.util.Calendar.getInstance();
+				cal.add(java.util.Calendar.MINUTE, -5);
+				if (cal.getTime().after(scm.getDate())) {
+					// 5 minutes seem like a good period
+					log.trace("Nothing has changed - sending");
+					os.received(scm);
+					lastReading.put(serial, scm);
+				}
+			}
+		}
+
+		return (scm);
+
+	}
+
+	private String evaluate(String s,
+			com.googlecode.jamr.model.StandardConsumptionMessage scm) {
 		org.mozilla.javascript.Context cx = org.mozilla.javascript.Context
 				.enter();
 		try {
@@ -232,7 +224,8 @@ public class SerialReader implements SerialPortEventListener {
 			if (!(fObj instanceof org.mozilla.javascript.Function)) {
 				log.error("f is undefined or not a function.");
 			} else {
-				Object functionArgs[] = {reading};
+				Object functionArgs[] = {scm.getReading(),
+						scm.getDeltaReading(), scm.getDeltaSeconds()};
 				org.mozilla.javascript.Function f = (org.mozilla.javascript.Function) fObj;
 				Object result = f.call(cx, scope, scope, functionArgs);
 				return (org.mozilla.javascript.Context.toString(result));

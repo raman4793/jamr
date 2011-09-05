@@ -19,7 +19,7 @@
 
 package com.googlecode.jamr;
 
-public class JamrConfig {
+public class Config {
 	private java.util.Hashtable functions;
 	private java.util.Hashtable operators;
 

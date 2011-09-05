@@ -22,6 +22,9 @@ package com.googlecode.jamr.model;
 public class StandardConsumptionMessage
 		extends
 			EncoderReceiverTransmitterMessage {
+	public StandardConsumptionMessage() {
+	}
+
 	public StandardConsumptionMessage(String parts[]) {
 		setSerial(parts[1]);
 		setReading(new java.math.BigDecimal(parts[3]));
