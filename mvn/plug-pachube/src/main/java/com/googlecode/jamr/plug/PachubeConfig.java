@@ -20,9 +20,18 @@
 package com.googlecode.jamr.plug;
 
 public class PachubeConfig {
+	private int secondsBetween;
 	private java.util.Hashtable keys;
 	private java.util.Hashtable feeds;
 	private java.util.Hashtable streams;
+
+	public int getSecondsBetween() {
+		return secondsBetween;
+	}
+
+	public void setSecondsBetween(int sb) {
+		this.secondsBetween = sb;
+	}
 
 	public java.util.Hashtable getKeys() {
 		return keys;

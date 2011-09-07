@@ -24,11 +24,13 @@ public class PachubePlug implements com.googlecode.jamr.spi.Outlet {
 			.getLogger(PachubePlug.class);
 
 	private PachubeConfig pc;
+	private java.util.Date lastReading;
 
 	private org.apache.http.impl.client.DefaultHttpClient httpclient;
 
 	public PachubePlug() {
 		log.trace("init");
+		lastReading = new java.util.Date();
 
 		java.util.Properties properties = System.getProperties();
 		String home = properties.getProperty("user.home");
@@ -59,6 +61,16 @@ public class PachubePlug implements com.googlecode.jamr.spi.Outlet {
 		log.info("serial: " + serial + " reading: " + ert.getReading()
 				+ " deltaSeconds: " + ert.getDeltaSeconds() + " deltaReading: "
 				+ ert.getDeltaReading());
+
+		if (pc.getSecondsBetween() > 0) {
+			java.util.Calendar cal = java.util.Calendar.getInstance();
+			cal.add(java.util.Calendar.SECOND, -pc.getSecondsBetween());
+			if (cal.getTime().before(lastReading)) {
+				log.info("Too soon - skipping seconds between set to: "
+						+ pc.getSecondsBetween());
+				return;
+			}
+		}
 
 		if (pc.getStreams() != null) {
 			String streamid = (String) pc.getStreams().get(serial);
@@ -95,7 +107,15 @@ public class PachubePlug implements com.googlecode.jamr.spi.Outlet {
 							response = httpclient.execute(post);
 							org.apache.http.StatusLine sl = response
 									.getStatusLine();
-							log.debug("code: " + sl.getStatusCode());
+							log.info("code: " + sl.getStatusCode());
+
+							if (sl.getStatusCode() != 200) {
+								String content = getAsString(response
+										.getEntity());
+								log.warn(content);
+							}
+
+							lastReading = new java.util.Date();
 						} catch (Exception e) {
 							java.io.StringWriter sw = new java.io.StringWriter();
 							java.io.PrintWriter pw = new java.io.PrintWriter(sw);
@@ -122,5 +142,28 @@ public class PachubePlug implements com.googlecode.jamr.spi.Outlet {
 		} else {
 			log.warn("No streams configured");
 		}
+	}
+	private String getAsString(org.apache.http.HttpEntity entity) {
+		StringBuilder sb = new StringBuilder();
+		try {
+			java.io.BufferedReader br = new java.io.BufferedReader(
+					new java.io.InputStreamReader(entity.getContent()));
+			String line = null;
+
+			while ((line = br.readLine()) != null) {
+				sb.append(line);
+			}
+
+			br.close();
+
+			org.apache.http.util.EntityUtils.consume(entity);
+		} catch (Exception e) {
+			java.io.StringWriter sw = new java.io.StringWriter();
+			java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+			e.printStackTrace(pw);
+			log.error("Stream To String Error: " + sw.toString());
+		}
+
+		return (sb.toString());
 	}
 }
