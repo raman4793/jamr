@@ -1,0 +1,31 @@
+ <project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.googlecode.jamr</groupId>
+    <artifactId>jamr-parent</artifactId>
+    <version>0.1</version>
+  </parent>
+
+  <groupId>com.googlecode.jamr</groupId>
+  <artifactId>plug-plotwatt</artifactId>
+  <packaging>jar</packaging>
+  <name>jamr plugin plotwatt</name>
+  <version>0.1</version>
+  <description>Plotwatt plugin to jamr core</description>
+
+
+  <dependencies>
+    <dependency>
+       <groupId>org.apache.httpcomponents</groupId>
+       <artifactId>httpclient</artifactId>
+       <version>4.1.1</version>
+    </dependency>
+
+    <dependency>
+       <groupId>com.googlecode.jamr</groupId>
+       <artifactId>jamr-core</artifactId>
+       <version>0.1</version>
+    </dependency>
+   </dependencies>
+</project>
