@@ -234,7 +234,8 @@ public class SerialReader implements SerialPortEventListener {
 				log.error("f is undefined or not a function.");
 			} else {
 				Object functionArgs[] = {scm.getReading(),
-						scm.getDeltaReading(), scm.getDeltaSeconds()};
+						scm.getDeltaReading(), scm.getDeltaSeconds(),
+						scm.getFrequency(), scm.getSignalStrength()};
 				org.mozilla.javascript.Function f = (org.mozilla.javascript.Function) fObj;
 				Object result = f.call(cx, scope, scope, functionArgs);
 				return (org.mozilla.javascript.Context.toString(result));

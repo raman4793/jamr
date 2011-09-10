@@ -4,14 +4,14 @@
   <parent>
     <groupId>com.googlecode.jamr</groupId>
     <artifactId>jamr-parent</artifactId>
-    <version>0.1</version>
+    <version>0.2</version>
   </parent>
 
   <groupId>com.googlecode.jamr</groupId>
   <artifactId>jamr-core</artifactId>
   <packaging>jar</packaging>
   <name>jamr core</name>
-  <version>0.1</version>
+  <version>0.2</version>
   <description>The core of jamr into which all other plugins plug into</description>
 
   <dependencies>

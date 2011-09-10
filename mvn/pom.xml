@@ -11,7 +11,7 @@
   <artifactId>jamr-parent</artifactId>
   <packaging>pom</packaging>
   <name>jamr Parent Pom</name>
-  <version>0.1</version>
+  <version>0.2</version>
   <description>Java Automated Meter Reading</description>
   <url>http://jamr.googlecode.com</url>
   <licenses>

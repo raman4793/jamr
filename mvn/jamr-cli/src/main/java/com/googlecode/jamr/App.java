@@ -25,19 +25,22 @@ public class App {
 
 	public static void main(String[] args) throws Exception {
 
-		gnu.getopt.LongOpt[] longopts = new gnu.getopt.LongOpt[4];
+		gnu.getopt.LongOpt[] longopts = new gnu.getopt.LongOpt[5];
 		longopts[0] = new gnu.getopt.LongOpt("help",
 				gnu.getopt.LongOpt.NO_ARGUMENT, null, 'h');
-		longopts[1] = new gnu.getopt.LongOpt("logging",
-				gnu.getopt.LongOpt.OPTIONAL_ARGUMENT, null, 'l');
-		longopts[2] = new gnu.getopt.LongOpt("outfile",
-				gnu.getopt.LongOpt.OPTIONAL_ARGUMENT, null, 'o');
-		longopts[3] = new gnu.getopt.LongOpt("serial",
+		longopts[1] = new gnu.getopt.LongOpt("full",
+				gnu.getopt.LongOpt.NO_ARGUMENT, null, 'f');
+		longopts[2] = new gnu.getopt.LongOpt("logging",
+				gnu.getopt.LongOpt.REQUIRED_ARGUMENT, null, 'l');
+		longopts[3] = new gnu.getopt.LongOpt("outfile",
+				gnu.getopt.LongOpt.REQUIRED_ARGUMENT, null, 'o');
+		longopts[4] = new gnu.getopt.LongOpt("serial",
 				gnu.getopt.LongOpt.REQUIRED_ARGUMENT, null, 's');
 
-		gnu.getopt.Getopt g = new gnu.getopt.Getopt("jamr", args, "hl:o:s:",
+		gnu.getopt.Getopt g = new gnu.getopt.Getopt("jamr", args, "hfl:o:s:",
 				longopts);
 
+		boolean full = false;
 		String logging = "ERROR";
 		String outfile = null;
 		String serial = null;
@@ -46,6 +49,10 @@ public class App {
 		String arg;
 		while ((c = g.getopt()) != -1)
 			switch (c) {
+				case 'f' :
+					full = true;
+					break;
+
 				case 'l' :
 					logging = g.getOptarg();
 					break;
@@ -110,10 +117,16 @@ public class App {
 			e.printStackTrace(pw);
 			log.error(sw.toString());
 		}
+
+		if (full) {
+			log.info("Setting Full Output On - frequency and signal strength");
+			su.setFullOutputOn();
+		}
 	}
 
 	public static void usage() {
-		System.out.println("usage: jamr [ -hls ]\n"
+		System.out.println("usage: jamr [ -hflos ]\n"
+				+ "   [ -f ] [ --full ]\n"
 				+ "   [ -l ] [ --logging= ] ( INFO, DEBUG )\n"
 				+ "   [ -o ] [ --outfile= ] ( /tmp/jamr.log )\n"
 				+ "   [ -s ] [ --serial= ] ( /dev/ttyACM0 )\n"
