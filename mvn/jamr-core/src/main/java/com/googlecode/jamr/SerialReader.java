@@ -131,6 +131,13 @@ public class SerialReader implements SerialPortEventListener {
 
 		// Send the original
 		com.googlecode.jamr.model.StandardConsumptionMessage scm = checkHistory(raw);
+		// Now we have computed the delta
+
+		if (scm == null) {
+			log
+					.trace("The original was not sent, not sending custom feeds either");
+			return;
+		}
 
 		// Calculate custom feeds
 		String serial = scm.getSerial();
@@ -203,6 +210,8 @@ public class SerialReader implements SerialPortEventListener {
 					log.trace("Nothing has changed - sending");
 					os.received(scm);
 					lastReading.put(serial, scm);
+				} else {
+					return (null);
 				}
 			}
 		}
