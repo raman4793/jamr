@@ -25,18 +25,21 @@ public class App {
 
 	public static void main(String[] args) throws Exception {
 
-		gnu.getopt.LongOpt[] longopts = new gnu.getopt.LongOpt[3];
+		gnu.getopt.LongOpt[] longopts = new gnu.getopt.LongOpt[4];
 		longopts[0] = new gnu.getopt.LongOpt("help",
 				gnu.getopt.LongOpt.NO_ARGUMENT, null, 'h');
 		longopts[1] = new gnu.getopt.LongOpt("logging",
 				gnu.getopt.LongOpt.OPTIONAL_ARGUMENT, null, 'l');
-		longopts[2] = new gnu.getopt.LongOpt("serial",
+		longopts[2] = new gnu.getopt.LongOpt("outfile",
+				gnu.getopt.LongOpt.OPTIONAL_ARGUMENT, null, 'o');
+		longopts[3] = new gnu.getopt.LongOpt("serial",
 				gnu.getopt.LongOpt.REQUIRED_ARGUMENT, null, 's');
 
-		gnu.getopt.Getopt g = new gnu.getopt.Getopt("jamr", args, "hl:s:",
+		gnu.getopt.Getopt g = new gnu.getopt.Getopt("jamr", args, "hl:o:s:",
 				longopts);
 
 		String logging = "ERROR";
+		String outfile = null;
 		String serial = null;
 
 		int c;
@@ -45,6 +48,10 @@ public class App {
 			switch (c) {
 				case 'l' :
 					logging = g.getOptarg();
+					break;
+
+				case 'o' :
+					outfile = g.getOptarg();
 					break;
 
 				case 's' :
@@ -56,10 +63,27 @@ public class App {
 					break;
 			}
 
-		log.info("CLI " + logging + " " + serial);
-
 		ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory
 				.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+
+		if (outfile != null) {
+
+			ch.qos.logback.classic.LoggerContext lc = root.getLoggerContext();
+
+			ch.qos.logback.core.FileAppender fa = new ch.qos.logback.core.FileAppender();
+			fa.setFile(outfile);
+			ch.qos.logback.classic.PatternLayout pl = new ch.qos.logback.classic.PatternLayout();
+			pl.setPattern("%d %5p %t [%c:%L] %m%n)");
+			pl.setContext(lc);
+			pl.start();
+			fa.setLayout(pl);
+			fa.setContext(lc);
+			fa.setName("FILE");
+			fa.start();
+			root.addAppender(fa);
+		}
+
+		log.info("CLI " + logging + " " + serial);
 
 		if (logging.toUpperCase().equals("TRACE")) {
 			root.setLevel(ch.qos.logback.classic.Level.TRACE);
@@ -91,6 +115,7 @@ public class App {
 	public static void usage() {
 		System.out.println("usage: jamr [ -hls ]\n"
 				+ "   [ -l ] [ --logging= ] ( INFO, DEBUG )\n"
+				+ "   [ -o ] [ --outfile= ] ( /tmp/jamr.log )\n"
 				+ "   [ -s ] [ --serial= ] ( /dev/ttyACM0 )\n"
 				+ "   [ -h ] [ --help ]\n");
 
