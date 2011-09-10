@@ -4,14 +4,14 @@
   <parent>
     <groupId>com.googlecode.jamr</groupId>
     <artifactId>jamr-parent</artifactId>
-    <version>0.1</version>
+    <version>0.2</version>
   </parent>
 
   <groupId>com.googlecode.jamr</groupId>
   <artifactId>jamr-cli</artifactId>
   <packaging>jar</packaging>
   <name>jamr cli</name>
-  <version>0.1</version>
+  <version>0.2</version>
   <description>jamr command line interface</description>
 
   <dependencies>
@@ -25,25 +25,25 @@
     <dependency>
       <groupId>com.googlecode.jamr</groupId>
       <artifactId>plug-plotwatt</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
 
     <dependency>
       <groupId>com.googlecode.jamr</groupId>
       <artifactId>plug-pachube</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
 
     <dependency>
        <groupId>com.googlecode.jamr</groupId>
        <artifactId>jamr-core</artifactId>
-       <version>0.1</version>
+       <version>0.2</version>
     </dependency>
 
     <dependency>
-       <groupId>urbanophile</groupId>
+       <groupId>gnu.getopt</groupId>
        <artifactId>java-getopt</artifactId>
-       <version>1.0.9</version>
+       <version>1.0.13</version>
     </dependency>
   </dependencies>
 

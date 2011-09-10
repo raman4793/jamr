@@ -4,14 +4,14 @@
   <parent>
     <groupId>com.googlecode.jamr</groupId>
     <artifactId>jamr-parent</artifactId>
-    <version>0.1</version>
+    <version>0.2</version>
   </parent>
 
   <groupId>com.googlecode.jamr</groupId>
   <artifactId>plug-plotwatt</artifactId>
   <packaging>jar</packaging>
   <name>jamr plugin plotwatt</name>
-  <version>0.1</version>
+  <version>0.2</version>
   <description>Plotwatt plugin to jamr core</description>
 
 
@@ -25,7 +25,7 @@
     <dependency>
        <groupId>com.googlecode.jamr</groupId>
        <artifactId>jamr-core</artifactId>
-       <version>0.1</version>
+       <version>0.2</version>
     </dependency>
    </dependencies>
 </project>
