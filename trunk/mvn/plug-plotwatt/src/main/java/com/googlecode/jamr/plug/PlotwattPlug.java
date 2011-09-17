@@ -32,12 +32,11 @@ public class PlotwattPlug implements com.googlecode.jamr.spi.Outlet {
 	public PlotwattPlug() {
 		log.trace("init");
 
-		java.util.Properties properties = System.getProperties();
-		String home = properties.getProperty("user.home");
+		com.googlecode.jamr.PlugUtils pu = new com.googlecode.jamr.PlugUtils();
 
 		// read in settings
 		com.thoughtworks.xstream.XStream xstream = new com.thoughtworks.xstream.XStream();
-		java.io.File file = new java.io.File(home + "/.jamr/plotwatt");
+		java.io.File file = pu.getConfigFile("plotwatt");
 		try {
 			java.io.FileInputStream fis = new java.io.FileInputStream(file);
 			pc = (PlotwattConfig) xstream.fromXML(fis);

@@ -1,0 +1,83 @@
+ <project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.googlecode.jamr</groupId>
+    <artifactId>jamr-parent</artifactId>
+    <version>0.2</version>
+  </parent>
+
+  <groupId>com.googlecode.jamr</groupId>
+  <artifactId>plug-jdbc</artifactId>
+  <packaging>jar</packaging>
+  <name>jamr plugin jdbc</name>
+  <version>0.2</version>
+  <description>jdbc plugin to jamr core</description>
+
+  <dependencies>
+
+    <dependency>
+       <groupId>mysql</groupId>
+       <artifactId>mysql-connector-java</artifactId>
+       <version>5.1.14</version>
+       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+       <groupId>org.hsqldb</groupId>
+       <artifactId>hsqldb</artifactId>
+       <version>2.2.4</version>
+       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>0.9.29</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+      <version>1.4</version>
+    </dependency>
+
+    <dependency>
+       <groupId>org.springframework</groupId>
+       <artifactId>spring-context</artifactId>
+       <version>3.0.6.RELEASE</version>
+    </dependency>
+
+    <dependency>
+       <groupId>org.springframework</groupId>
+       <artifactId>spring-jdbc</artifactId>
+       <version>3.0.6.RELEASE</version>
+    </dependency>
+
+    <dependency>
+       <groupId>com.googlecode.jamr</groupId>
+       <artifactId>jamr-core</artifactId>
+       <version>0.2</version>
+    </dependency>
+
+    <dependency>
+       <groupId>junit</groupId>
+       <artifactId>junit</artifactId>
+       <version>3.8.1</version>
+       <scope>test</scope>
+    </dependency>
+   </dependencies>
+
+   <build>
+     <plugins>
+        <plugin>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-surefire-plugin</artifactId>
+           <configuration>
+              <useFile>false</useFile>
+           </configuration>
+        </plugin>
+     </plugins>
+   </build>
+</project>

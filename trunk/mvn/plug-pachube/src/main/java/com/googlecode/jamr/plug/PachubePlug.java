@@ -30,14 +30,14 @@ public class PachubePlug implements com.googlecode.jamr.spi.Outlet {
 
 	public PachubePlug() {
 		log.trace("init");
-		lastReading = new java.util.Date();
 
-		java.util.Properties properties = System.getProperties();
-		String home = properties.getProperty("user.home");
+		com.googlecode.jamr.PlugUtils pu = new com.googlecode.jamr.PlugUtils();
+
+		lastReading = new java.util.Date();
 
 		// read in settings
 		com.thoughtworks.xstream.XStream xstream = new com.thoughtworks.xstream.XStream();
-		java.io.File file = new java.io.File(home + "/.jamr/pachube");
+		java.io.File file = pu.getConfigFile("pachube");
 		try {
 			java.io.FileInputStream fis = new java.io.FileInputStream(file);
 			pc = (PachubeConfig) xstream.fromXML(fis);
