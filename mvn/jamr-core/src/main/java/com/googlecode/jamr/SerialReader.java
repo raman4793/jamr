@@ -39,15 +39,15 @@ public class SerialReader implements SerialPortEventListener {
 
 	public SerialReader(java.io.InputStream in) {
 		log.trace("init");
+
+		PlugUtils pu = new PlugUtils();
+
 		this.in = in;
 		blockingQueue = new java.util.concurrent.LinkedBlockingQueue<String>();
 		lastReading = new java.util.Hashtable<String, com.googlecode.jamr.model.EncoderReceiverTransmitterMessage>();
 
-		java.util.Properties properties = System.getProperties();
-		String home = properties.getProperty("user.home");
-
 		com.thoughtworks.xstream.XStream xstream = new com.thoughtworks.xstream.XStream();
-		java.io.File file = new java.io.File(home + "/.jamr/config");
+		java.io.File file = pu.getConfigFile("config");
 		try {
 			java.io.FileInputStream fis = new java.io.FileInputStream(file);
 			jc = (Config) xstream.fromXML(fis);

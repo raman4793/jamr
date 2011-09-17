@@ -35,6 +35,7 @@
 
   <modules>
      <module>jamr-core</module>
+     <module>plug-jdbc</module>
      <module>plug-pachube</module>
      <module>plug-plotwatt</module>
      <module>plug-stdout</module>
