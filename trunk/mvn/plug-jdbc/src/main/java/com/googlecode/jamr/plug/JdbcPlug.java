@@ -64,7 +64,13 @@ public class JdbcPlug implements com.googlecode.jamr.spi.Outlet {
 				ErtmDAO dao = (ErtmDAO) targets.get(i);
 				dao.insertErt(ert);
 
-				log.info("Verify: " + dao.verify());
+				String details = "";
+				Object obj = dao.getDataSource();
+				if (obj instanceof org.apache.commons.dbcp.BasicDataSource) {
+					org.apache.commons.dbcp.BasicDataSource bds = (org.apache.commons.dbcp.BasicDataSource) obj;
+					details = bds.getDriverClassName();
+				}
+				log.info(details + " Verify: " + dao.verify());
 			} catch (Exception e) {
 				java.io.StringWriter sw = new java.io.StringWriter();
 				java.io.PrintWriter pw = new java.io.PrintWriter(sw);

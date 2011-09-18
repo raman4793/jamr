@@ -33,6 +33,10 @@ public class ErtmDAO {
 				dataSource);
 	}
 
+	public javax.sql.DataSource getDataSource() {
+		return (jdbcTemplate.getDataSource());
+	}
+
 	public void setCreateStatement(String c) {
 		this.createStatement = c;
 	}
