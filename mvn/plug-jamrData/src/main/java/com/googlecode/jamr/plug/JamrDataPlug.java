@@ -27,8 +27,14 @@ public class JamrDataPlug implements com.googlecode.jamr.spi.Outlet {
 
 	private org.apache.http.impl.client.DefaultHttpClient httpclient;
 
+	private java.util.Hashtable<String, com.googlecode.jamr.model.EncoderReceiverTransmitterMessage> lastReading;
+	private java.util.List<com.googlecode.jamr.model.EncoderReceiverTransmitterMessage> queue;
+
 	public JamrDataPlug() {
 		log.trace("init");
+
+		lastReading = new java.util.Hashtable<String, com.googlecode.jamr.model.EncoderReceiverTransmitterMessage>();
+		queue = new java.util.Vector<com.googlecode.jamr.model.EncoderReceiverTransmitterMessage>();
 
 		com.googlecode.jamr.PlugUtils pu = new com.googlecode.jamr.PlugUtils();
 
@@ -63,6 +69,26 @@ public class JamrDataPlug implements com.googlecode.jamr.spi.Outlet {
 			log.error("No Access Code configured");
 		}
 
+		com.googlecode.jamr.model.StandardConsumptionMessage old = (com.googlecode.jamr.model.StandardConsumptionMessage) lastReading
+				.get(serial);
+		if (old != null) {
+			java.util.Calendar cal = java.util.Calendar.getInstance();
+			cal.setTime(old.getDate());
+			cal.add(java.util.Calendar.MINUTE, jdc.getMinutesBetween());
+			if (ert.getDate().before(cal.getTime())) {
+				log.trace("Too Soon - skipping for now");
+				return;
+			}
+		}
+
+		lastReading.put(serial, ert);
+		queue.add(ert);
+
+		if (queue.size() < jdc.getItemsInQueue()) {
+			log.info("Size of queue: " + queue.size());
+			return;
+		}
+
 		org.apache.http.client.methods.HttpPost post = new org.apache.http.client.methods.HttpPost(
 				url);
 
@@ -74,13 +100,16 @@ public class JamrDataPlug implements com.googlecode.jamr.spi.Outlet {
 		try {
 			java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
 			java.io.ObjectOutputStream out = new java.io.ObjectOutputStream(bos);
-			out.writeObject(ert);
+			out.writeObject(queue);
 			out.close();
 			byte[] buf = bos.toByteArray();
 			post.setEntity(new org.apache.http.entity.ByteArrayEntity(buf));
 			response = httpclient.execute(post);
 			org.apache.http.StatusLine sl = response.getStatusLine();
 			log.info("code: " + sl.getStatusCode());
+			if (sl.getStatusCode() == 200) {
+				queue = new java.util.Vector();
+			}
 		} catch (Exception e) {
 			java.io.StringWriter sw = new java.io.StringWriter();
 			java.io.PrintWriter pw = new java.io.PrintWriter(sw);

@@ -136,12 +136,13 @@ public class App {
 	}
 
 	public static void usage() {
-		System.out.println("usage: jamr [ -hflos ]\n"
-				+ "   [ -f ] [ --full ]\n"
-				+ "   [ -l ] [ --logging= ] ( INFO, DEBUG )\n"
-				+ "   [ -o ] [ --outfile= ] ( /tmp/jamr.log )\n"
-				+ "   [ -s ] [ --serial= ] ( /dev/ttyACM0 )\n"
-				+ "   [ -h ] [ --help ]\n");
+		System.out
+				.println("usage: jamr [ -hflos ]\n"
+						+ "   [ -f ] [ --full ]     include receive channel and signal strength for each packet.\n"
+						+ "   [ -l ] [ --logging= ] ( INFO, DEBUG )\n"
+						+ "   [ -o ] [ --outfile= ] ( /tmp/jamr.log )\n"
+						+ "   [ -s ] [ --serial= ] ( /dev/ttyACM0 )\n"
+						+ "   [ -h ] [ --help ]\n");
 
 		System.exit(1);
 	}
