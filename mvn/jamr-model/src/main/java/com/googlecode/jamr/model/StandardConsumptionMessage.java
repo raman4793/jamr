@@ -21,7 +21,7 @@ package com.googlecode.jamr.model;
 
 public class StandardConsumptionMessage
 		extends
-			EncoderReceiverTransmitterMessage {
+			EncoderReceiverTransmitterMessage implements java.io.Serializable {
 	public StandardConsumptionMessage() {
 	}
 

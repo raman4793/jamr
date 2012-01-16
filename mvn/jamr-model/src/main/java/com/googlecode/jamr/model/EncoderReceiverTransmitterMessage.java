@@ -19,7 +19,7 @@
 
 package com.googlecode.jamr.model;
 
-public class EncoderReceiverTransmitterMessage {
+public class EncoderReceiverTransmitterMessage implements java.io.Serializable {
 	private java.util.Date date;
 	private String serial;
 	private java.math.BigDecimal reading;
