@@ -34,11 +34,13 @@
   </developers>
 
   <modules>
+     <module>jamr-model</module>
      <module>jamr-core</module>
      <module>plug-jdbc</module>
      <module>plug-pachube</module>
      <module>plug-plotwatt</module>
      <module>plug-stdout</module>
+     <module>plug-jamrData</module>
      <module>jamr-cli</module>
   </modules>
 
@@ -58,6 +60,7 @@
 
   <build>
     <plugins>
+	<!--
         <plugin>
             <groupId>com.mycila.maven-license-plugin</groupId>
             <artifactId>maven-license-plugin</artifactId>
@@ -73,6 +76,7 @@
                 </execution>
             </executions>
         </plugin>
+	-->
 
 	<plugin>
            <groupId>com.googlecode.maven-java-formatter-plugin</groupId>

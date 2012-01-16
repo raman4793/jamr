@@ -26,5 +26,11 @@
       <artifactId>nrjavaserial</artifactId>
       <version>3.7.5.1</version>
     </dependency>
+
+    <dependency>
+      <groupId>com.googlecode.jamr</groupId>
+      <artifactId>jamr-model</artifactId>
+      <version>0.2</version>
+    </dependency>
   </dependencies>
 </project>

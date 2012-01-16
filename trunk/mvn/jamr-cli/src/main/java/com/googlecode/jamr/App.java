@@ -75,6 +75,10 @@ public class App {
 
 		if (outfile != null) {
 
+			log.info("Redirecting all logging to " + outfile);
+
+			root.detachAndStopAllAppenders();
+
 			ch.qos.logback.classic.LoggerContext lc = root.getLoggerContext();
 
 			ch.qos.logback.core.FileAppender fa = new ch.qos.logback.core.FileAppender();
@@ -122,6 +126,13 @@ public class App {
 			log.info("Setting Full Output On - frequency and signal strength");
 			su.setFullOutputOn();
 		}
+
+		org.mortbay.jetty.Server jetty = new org.mortbay.jetty.Server(7070);
+		org.mortbay.jetty.servlet.Context webRoot = new org.mortbay.jetty.servlet.Context(
+				jetty, "/", org.mortbay.jetty.servlet.Context.SESSIONS);
+		webRoot.addServlet(new org.mortbay.jetty.servlet.ServletHolder(
+				new JamrServlet()), "/*");
+		jetty.start();
 	}
 
 	public static void usage() {

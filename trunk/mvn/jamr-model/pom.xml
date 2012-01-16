@@ -1,0 +1,20 @@
+ <project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.googlecode.jamr</groupId>
+    <artifactId>jamr-parent</artifactId>
+    <version>0.2</version>
+  </parent>
+
+  <groupId>com.googlecode.jamr</groupId>
+  <artifactId>jamr-model</artifactId>
+  <packaging>jar</packaging>
+  <name>jamr model</name>
+  <version>0.2</version>
+  <description>Model objects for jamr</description>
+
+
+  <dependencies>
+  </dependencies>
+</project>
