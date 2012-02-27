@@ -115,16 +115,16 @@ public class App {
 		SerialUtils su = SerialUtils.getInstance();
 		try {
 			su.connect(serial);
+			if (full) {
+				log
+						.info("Setting Full Output On - frequency and signal strength");
+				su.setFullOutputOn();
+			}
 		} catch (java.lang.Exception e) {
 			java.io.StringWriter sw = new java.io.StringWriter();
 			java.io.PrintWriter pw = new java.io.PrintWriter(sw);
 			e.printStackTrace(pw);
 			log.error(sw.toString());
-		}
-
-		if (full) {
-			log.info("Setting Full Output On - frequency and signal strength");
-			su.setFullOutputOn();
 		}
 
 		org.mortbay.jetty.Server jetty = new org.mortbay.jetty.Server(7070);
