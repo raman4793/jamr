@@ -24,13 +24,27 @@ public class JamrServlet extends javax.servlet.http.HttpServlet {
 		String operation = request.getPathInfo();
 		log.info("servicing: " + operation);
 
+		String andWhere = "";
+		String meter = request.getParameter("meter");
+		if (meter != null) {
+			andWhere = " and serial = '" + meter + "'";
+		}
+
+		String after = request.getParameter("after");
+		if (after != null) {
+			long aft = new Long(after).longValue();
+			java.sql.Timestamp ts = new java.sql.Timestamp(aft);
+			andWhere = andWhere + " and recorded_at > '" + ts + "'";
+		}
+
 		try {
 			java.util.List output = new java.util.Vector();
 
 			java.sql.Connection conn = ds.getConnection();
 			if (operation.equals("/favicon.ico")) {
 			} else if (operation.equals("/dump")) {
-				String sql = "select serial, recorded_at, reading from meters";
+				String sql = "select serial, recorded_at, reading from meters where 1 = 1 "
+						+ andWhere;
 				log.info("SQL: " + sql);
 				java.sql.PreparedStatement ps = conn.prepareStatement(sql);
 				//ps.setString( 1, guid );
@@ -38,7 +52,7 @@ public class JamrServlet extends javax.servlet.http.HttpServlet {
 				while (rs.next()) {
 					java.util.Hashtable record = new java.util.Hashtable();
 					record.put("meter", rs.getString(1));
-					record.put("timestamp", rs.getDate(2).getTime() / 1000);
+					record.put("timestamp", rs.getTimestamp(2).getTime());
 					record.put("reading", rs.getString(3));
 					output.add(record);
 				}
