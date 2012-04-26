@@ -6,6 +6,10 @@ public class FusionTablesPlug implements com.googlecode.jamr.spi.Outlet {
 
 	private FusionTablesConfig ftc;
 
+	private java.net.URL postUrl;
+	private com.google.gdata.client.GoogleService service;
+	private String jamrTable;
+
 	public FusionTablesPlug() {
 		log.trace("init");
 
@@ -27,31 +31,62 @@ public class FusionTablesPlug implements com.googlecode.jamr.spi.Outlet {
 		}
 
 		try {
-
-			java.net.URL url = new java.net.URL(
+			postUrl = new java.net.URL(
 					"https://www.google.com/fusiontables/api/query?encid=true");
-
-			com.google.gdata.client.GoogleService service = new com.google.gdata.client.GoogleService(
-					"fusiontables", "fusiontables.ApiExample");
+			service = new com.google.gdata.client.GoogleService("fusiontables",
+					"fusiontables.ApiExample");
 			service.setUserCredentials(ftc.getEmail(), ftc.getPassword(),
 					com.google.gdata.client.ClientLoginAccountType.GOOGLE);
 
-			com.google.gdata.client.Service.GDataRequest request = service
+			// Now list the tables to see if we need to create it or user use it
+			java.net.URL url = new java.net.URL(
+					"https://www.google.com/fusiontables/api/query?sql="
+							+ java.net.URLEncoder
+									.encode("SHOW TABLES", "UTF-8")
+							+ "&encid=true");
+			com.google.gdata.client.Service.GDataRequest show = service
 					.getRequestFactory()
 					.getRequest(
-							com.google.gdata.client.Service.GDataRequest.RequestType.INSERT,
-							url,
-							new com.google.gdata.util.ContentType(
-									"application/x-www-form-urlencoded"));
-			java.io.OutputStreamWriter writer = new java.io.OutputStreamWriter(
-					request.getRequestStream());
-			writer.append("sql="
-					+ java.net.URLEncoder.encode(
-							"CREATE TABLE demo (name:STRING, date:DATETIME)",
-							"UTF-8"));
-			writer.flush();
+							com.google.gdata.client.Service.GDataRequest.RequestType.QUERY,
+							url, com.google.gdata.util.ContentType.TEXT_PLAIN);
+			show.execute();
 
-			request.execute();
+			java.util.List<String[]> rows = getRows(show);
+
+			for (int i = 0; i < rows.size(); i++) {
+				String[] data = (String[]) rows.get(i);
+				log.warn(data[0]);
+				log.warn(data[1]);
+
+				if (data[1].equals("demo")) {
+					jamrTable = data[0];
+				}
+			}
+
+			if (jamrTable == null) {
+				com.google.gdata.client.Service.GDataRequest request = service
+						.getRequestFactory()
+						.getRequest(
+								com.google.gdata.client.Service.GDataRequest.RequestType.INSERT,
+								postUrl,
+								new com.google.gdata.util.ContentType(
+										"application/x-www-form-urlencoded"));
+				java.io.OutputStreamWriter writer = new java.io.OutputStreamWriter(
+						request.getRequestStream());
+				writer
+						.append("sql="
+								+ java.net.URLEncoder
+										.encode(
+												"CREATE TABLE demo (name:STRING, date:DATETIME)",
+												"UTF-8"));
+				writer.flush();
+
+				request.execute();
+
+				java.util.List<String[]> createRows = getRows(request);
+				jamrTable = createRows.get(0)[0];
+				log.warn("New table id: " + jamrTable);
+			}
 
 		} catch (Exception e) {
 			java.io.StringWriter sw = new java.io.StringWriter();
@@ -66,5 +101,49 @@ public class FusionTablesPlug implements com.googlecode.jamr.spi.Outlet {
 			com.googlecode.jamr.model.EncoderReceiverTransmitterMessage ert) {
 		String serial = ert.getSerial();
 		log.trace("received serial: " + serial);
+
+		try {
+			com.google.gdata.client.Service.GDataRequest request = service
+					.getRequestFactory()
+					.getRequest(
+							com.google.gdata.client.Service.GDataRequest.RequestType.INSERT,
+							postUrl,
+							new com.google.gdata.util.ContentType(
+									"application/x-www-form-urlencoded"));
+			java.io.OutputStreamWriter writer = new java.io.OutputStreamWriter(
+					request.getRequestStream());
+			writer.append("sql="
+					+ java.net.URLEncoder.encode("INSERT INTO " + jamrTable
+							+ " (name, date) VALUES ('bob', '1/1/2012')",
+							"UTF-8"));
+			writer.flush();
+			request.execute();
+		} catch (Exception e) {
+			java.io.StringWriter sw = new java.io.StringWriter();
+			java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+			e.printStackTrace(pw);
+			log.error(sw.toString());
+		}
+	}
+
+	private java.util.List<String[]> getRows(
+			com.google.gdata.client.Service.GDataRequest request)
+			throws Exception {
+		java.io.InputStreamReader inputStreamReader = new java.io.InputStreamReader(
+				request.getResponseStream());
+		java.io.BufferedReader bufferedStreamReader = new java.io.BufferedReader(
+				inputStreamReader);
+
+		au.com.bytecode.opencsv.CSVReader reader = new au.com.bytecode.opencsv.CSVReader(
+				bufferedStreamReader);
+
+		// The first line is the column names, and the remaining lines are the rows.
+		java.util.List<String[]> csvLines = reader.readAll();
+		java.util.List<String> columns = java.util.Arrays.asList(csvLines
+				.get(0));
+		java.util.List<String[]> rows = csvLines.subList(1, csvLines.size());
+
+		return (rows);
+
 	}
 }
