@@ -59,6 +59,12 @@
 
     <dependency>
       <groupId>com.googlecode.jamr</groupId>
+      <artifactId>plug-fusiontables</artifactId>
+      <version>0.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.googlecode.jamr</groupId>
       <artifactId>plug-csv</artifactId>
       <version>0.2</version>
     </dependency>
