@@ -113,10 +113,14 @@ public class FusionTablesPlug implements com.googlecode.jamr.spi.Outlet {
 			java.io.OutputStreamWriter writer = new java.io.OutputStreamWriter(
 					request.getRequestStream());
 			writer.append("sql="
-					+ java.net.URLEncoder.encode("INSERT INTO " + jamrTable
+					+ java.net.URLEncoder.encode("INSERT INTO "
+							+ jamrTable
 							+ " (serial, recorded_at, reading) VALUES ('"
-							+ serial + "', '" + ert.getDate() + "', '"
-							+ ert.getReading() + "')", "UTF-8"));
+							+ serial
+							+ "', '"
+							+ java.text.DateFormat.getInstance().format(
+									ert.getDate()) + "', '" + ert.getReading()
+							+ "')", "UTF-8"));
 			writer.flush();
 			request.execute();
 		} catch (Exception e) {
