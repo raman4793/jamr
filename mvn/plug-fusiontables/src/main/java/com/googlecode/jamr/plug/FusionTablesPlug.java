@@ -58,7 +58,7 @@ public class FusionTablesPlug implements com.googlecode.jamr.spi.Outlet {
 				log.warn(data[0]);
 				log.warn(data[1]);
 
-				if (data[1].equals("demo")) {
+				if (data[1].equals("jamr")) {
 					jamrTable = data[0];
 				}
 			}
@@ -77,7 +77,7 @@ public class FusionTablesPlug implements com.googlecode.jamr.spi.Outlet {
 						.append("sql="
 								+ java.net.URLEncoder
 										.encode(
-												"CREATE TABLE demo (name:STRING, date:DATETIME)",
+												"CREATE TABLE jamr (serial:STRING, recorded_at:DATETIME, reading:NUMBER)",
 												"UTF-8"));
 				writer.flush();
 
@@ -114,8 +114,9 @@ public class FusionTablesPlug implements com.googlecode.jamr.spi.Outlet {
 					request.getRequestStream());
 			writer.append("sql="
 					+ java.net.URLEncoder.encode("INSERT INTO " + jamrTable
-							+ " (name, date) VALUES ('bob', '1/1/2012')",
-							"UTF-8"));
+							+ " (serial, recorded_at, reading) VALUES ('"
+							+ serial + "', '" + ert.getDate() + "', '"
+							+ ert.getReading() + "')", "UTF-8"));
 			writer.flush();
 			request.execute();
 		} catch (Exception e) {
