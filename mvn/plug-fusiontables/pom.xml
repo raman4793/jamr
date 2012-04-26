@@ -1,0 +1,42 @@
+ <project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.googlecode.jamr</groupId>
+    <artifactId>jamr-parent</artifactId>
+    <version>0.2</version>
+  </parent>
+
+  <groupId>com.googlecode.jamr</groupId>
+  <artifactId>plug-fusiontables</artifactId>
+  <packaging>jar</packaging>
+  <name>jamr plugin fusiontables</name>
+  <version>0.2</version>
+  <description>Google Fusion table plugin to jamr core</description>
+
+
+  <dependencies>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>0.9.29</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+	<groupId>com.google.gdata</groupId>
+	<artifactId>gdata-docs-3.0</artifactId>
+	<version>1.41.5</version>
+    </dependency>
+    <dependency>
+       <groupId>com.googlecode.jamr</groupId>
+       <artifactId>jamr-core</artifactId>
+       <version>0.2</version>
+    </dependency>
+    <dependency>
+       <groupId>junit</groupId>
+       <artifactId>junit</artifactId>
+       <version>3.8.1</version>
+       <scope>test</scope>
+    </dependency>
+   </dependencies>
+</project>
