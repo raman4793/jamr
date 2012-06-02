@@ -144,6 +144,13 @@ public class App {
 						+ "   [ -s ] [ --serial= ] ( /dev/ttyACM0 )\n"
 						+ "   [ -h ] [ --help ]\n");
 
+		System.out.println("All ports found include: ");
+		SerialUtils su = SerialUtils.getInstance();
+		java.util.List ports = su.getPorts();
+		for (int x = 0; x < ports.size(); x++) {
+			System.out.println("\t" + (String) ports.get(x) );
+		}
+
 		System.exit(1);
 	}
 }
