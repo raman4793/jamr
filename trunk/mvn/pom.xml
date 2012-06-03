@@ -36,10 +36,10 @@
   <modules>
      <module>jamr-model</module>
      <module>jamr-core</module>
+     <module>plug-cosm</module>
      <module>plug-csv</module>
      <module>plug-fusiontables</module>
      <module>plug-jdbc</module>
-     <module>plug-pachube</module>
      <module>plug-plotwatt</module>
      <module>plug-stdout</module>
      <module>plug-jamrData</module>

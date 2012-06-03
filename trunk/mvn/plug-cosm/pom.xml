@@ -8,11 +8,11 @@
   </parent>
 
   <groupId>com.googlecode.jamr</groupId>
-  <artifactId>plug-pachube</artifactId>
+  <artifactId>plug-cosm</artifactId>
   <packaging>jar</packaging>
-  <name>jamr plugin pachube</name>
+  <name>jamr plugin cosm</name>
   <version>0.2</version>
-  <description>Pachube plugin to jamr core</description>
+  <description>Cosm plugin to jamr core</description>
 
 
   <dependencies>

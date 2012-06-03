@@ -19,16 +19,16 @@
 
 package com.googlecode.jamr.plug;
 
-public class PachubePlug implements com.googlecode.jamr.spi.Outlet {
+public class CosmPlug implements com.googlecode.jamr.spi.Outlet {
 	private static org.slf4j.Logger log = org.slf4j.LoggerFactory
-			.getLogger(PachubePlug.class);
+			.getLogger(CosmPlug.class);
 
-	private PachubeConfig pc;
+	private CosmConfig pc;
 	private java.util.Date lastReading;
 
 	private org.apache.http.impl.client.DefaultHttpClient httpclient;
 
-	public PachubePlug() {
+	public CosmPlug() {
 		log.trace("init");
 
 		com.googlecode.jamr.PlugUtils pu = new com.googlecode.jamr.PlugUtils();
@@ -37,10 +37,10 @@ public class PachubePlug implements com.googlecode.jamr.spi.Outlet {
 
 		// read in settings
 		com.thoughtworks.xstream.XStream xstream = new com.thoughtworks.xstream.XStream();
-		java.io.File file = pu.getConfigFile("pachube");
+		java.io.File file = pu.getConfigFile("cosm");
 		try {
 			java.io.FileInputStream fis = new java.io.FileInputStream(file);
-			pc = (PachubeConfig) xstream.fromXML(fis);
+			pc = (CosmConfig) xstream.fromXML(fis);
 		} catch (java.io.FileNotFoundException fnfe) {
 			java.io.StringWriter sw = new java.io.StringWriter();
 			java.io.PrintWriter pw = new java.io.PrintWriter(sw);
@@ -48,7 +48,7 @@ public class PachubePlug implements com.googlecode.jamr.spi.Outlet {
 			log.error(sw.toString());
 
 			// TODO install empty config ??
-			pc = new PachubeConfig();
+			pc = new CosmConfig();
 		}
 
 		httpclient = new org.apache.http.impl.client.DefaultHttpClient();
@@ -80,15 +80,14 @@ public class PachubePlug implements com.googlecode.jamr.spi.Outlet {
 					String key = (String) pc.getKeys().get(feedid);
 					if (key != null) {
 
-						String url = "http://api.pachube.com/v2/feeds/"
-								+ feedid + "/datastreams/" + streamid
-								+ "/datapoints";
+						String url = "http://api.cosm.com/v2/feeds/" + feedid
+								+ "/datastreams/" + streamid + "/datapoints";
 						log.trace("url: " + url);
 
 						org.apache.http.client.methods.HttpPost post = new org.apache.http.client.methods.HttpPost(
 								url);
 						org.apache.http.message.BasicHeader auth = new org.apache.http.message.BasicHeader(
-								"X-PachubeApiKey", key);
+								"X-ApiKey", key);
 						post.addHeader(auth);
 
 						org.joda.time.format.DateTimeFormatter fmt = org.joda.time.format.ISODateTimeFormat

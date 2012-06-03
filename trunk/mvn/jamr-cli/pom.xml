@@ -89,7 +89,7 @@
 
     <dependency>
       <groupId>com.googlecode.jamr</groupId>
-      <artifactId>plug-pachube</artifactId>
+      <artifactId>plug-cosm</artifactId>
       <version>0.2</version>
     </dependency>
 

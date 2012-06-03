@@ -19,7 +19,7 @@
 
 package com.googlecode.jamr.plug;
 
-public class PachubeConfig {
+public class CosmConfig {
 	private int secondsBetween;
 	private java.util.Hashtable keys;
 	private java.util.Hashtable feeds;

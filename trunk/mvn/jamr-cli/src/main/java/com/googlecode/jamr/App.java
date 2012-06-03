@@ -148,7 +148,7 @@ public class App {
 		SerialUtils su = SerialUtils.getInstance();
 		java.util.List ports = su.getPorts();
 		for (int x = 0; x < ports.size(); x++) {
-			System.out.println("\t" + (String) ports.get(x) );
+			System.out.println("\t" + (String) ports.get(x));
 		}
 
 		System.exit(1);
