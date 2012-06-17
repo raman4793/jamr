@@ -1,0 +1,46 @@
+ <project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.googlecode.jamr</groupId>
+  <artifactId>debug-jcomport</artifactId>
+  <packaging>jar</packaging>
+  <name>debug</name>
+  <version>0.2</version>
+  <description>Help resolve issues on other platforms.</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>jcomport</groupId>
+      <artifactId>jcomport</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+     <plugins>
+        <plugin>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-assembly-plugin</artifactId>
+           <version>2.3</version>
+           <configuration>
+	      <descriptorRefs>
+                 <descriptorRef>jar-with-dependencies</descriptorRef>
+              </descriptorRefs>
+              <archive>
+                 <manifest>
+                    <mainClass>com.googlecode.jamr.App</mainClass>
+                 </manifest>
+              </archive>
+           </configuration>
+        </plugin>
+        <plugin>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-compiler-plugin</artifactId>
+           <configuration>
+              <source>1.5</source>
+              <target>1.5</target>
+           </configuration>
+        </plugin>
+     </plugins>
+  </build>
+</project>
