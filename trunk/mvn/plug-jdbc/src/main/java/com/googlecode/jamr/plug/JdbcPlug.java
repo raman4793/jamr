@@ -30,22 +30,27 @@ public class JdbcPlug implements com.googlecode.jamr.spi.Outlet {
 
 		com.googlecode.jamr.PlugUtils pu = new com.googlecode.jamr.PlugUtils();
 
-		context = new org.springframework.context.support.FileSystemXmlApplicationContext(
-				"file:" + pu.getConfigPath() + "jdbc");
+		java.io.File config = new java.io.File(pu.getConfigPath() + "jdbc");
+		if (config.exists()) {
+			context = new org.springframework.context.support.FileSystemXmlApplicationContext(
+					"file:" + pu.getConfigPath() + "jdbc");
 
-		// create tables here
-		TargetList targetList = (TargetList) context.getBean("TargetList");
-		java.util.List targets = targetList.getTargets();
-		for (int i = 0; i < targets.size(); i++) {
-			try {
-				ErtmDAO dao = (ErtmDAO) targets.get(i);
-				dao.createTable();
-			} catch (Exception e) {
-				java.io.StringWriter sw = new java.io.StringWriter();
-				java.io.PrintWriter pw = new java.io.PrintWriter(sw);
-				e.printStackTrace(pw);
-				log.error(sw.toString());
+			// create tables here
+			TargetList targetList = (TargetList) context.getBean("TargetList");
+			java.util.List targets = targetList.getTargets();
+			for (int i = 0; i < targets.size(); i++) {
+				try {
+					ErtmDAO dao = (ErtmDAO) targets.get(i);
+					dao.createTable();
+				} catch (Exception e) {
+					java.io.StringWriter sw = new java.io.StringWriter();
+					java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+					e.printStackTrace(pw);
+					log.error(sw.toString());
+				}
 			}
+		} else {
+			log.info("No jdbc config file found");
 		}
 	}
 
@@ -57,26 +62,30 @@ public class JdbcPlug implements com.googlecode.jamr.spi.Outlet {
 				+ " deltaSeconds: " + ert.getDeltaSeconds() + " deltaReading: "
 				+ ert.getDeltaReading());
 
-		TargetList targetList = (TargetList) context.getBean("TargetList");
-		java.util.List targets = targetList.getTargets();
-		for (int i = 0; i < targets.size(); i++) {
-			try {
-				ErtmDAO dao = (ErtmDAO) targets.get(i);
-				dao.insertErt(ert);
+		if (context != null) {
+			TargetList targetList = (TargetList) context.getBean("TargetList");
+			java.util.List targets = targetList.getTargets();
+			for (int i = 0; i < targets.size(); i++) {
+				try {
+					ErtmDAO dao = (ErtmDAO) targets.get(i);
+					dao.insertErt(ert);
 
-				String details = "";
-				Object obj = dao.getDataSource();
-				if (obj instanceof org.apache.commons.dbcp.BasicDataSource) {
-					org.apache.commons.dbcp.BasicDataSource bds = (org.apache.commons.dbcp.BasicDataSource) obj;
-					details = bds.getDriverClassName();
+					String details = "";
+					Object obj = dao.getDataSource();
+					if (obj instanceof org.apache.commons.dbcp.BasicDataSource) {
+						org.apache.commons.dbcp.BasicDataSource bds = (org.apache.commons.dbcp.BasicDataSource) obj;
+						details = bds.getDriverClassName();
+					}
+					log.info(details + " Verify: " + dao.verify());
+				} catch (Exception e) {
+					java.io.StringWriter sw = new java.io.StringWriter();
+					java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+					e.printStackTrace(pw);
+					log.error(sw.toString());
 				}
-				log.info(details + " Verify: " + dao.verify());
-			} catch (Exception e) {
-				java.io.StringWriter sw = new java.io.StringWriter();
-				java.io.PrintWriter pw = new java.io.PrintWriter(sw);
-				e.printStackTrace(pw);
-				log.error(sw.toString());
 			}
+		} else {
+			log.debug("No context available");
 		}
 	}
 }
