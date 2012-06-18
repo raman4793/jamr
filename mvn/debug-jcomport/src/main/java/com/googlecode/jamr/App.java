@@ -8,6 +8,7 @@ public class App {
 	private SerialPort serport;
 
 	public static void main(String[] args) throws Exception {
+		System.out.println( System.getProperty( "os.name" ) );
 		App a = new App();
 		a.start( args );
 	}
@@ -33,6 +34,17 @@ public class App {
 		String portName = args[0];
 		CommPort aPort = portIdentifier.getCommPort(portName);
 		aPort.open();
+
+		/*
+			The following line throws:
+			Exception in thread "main" java.io.IOException: fun(SetSerialPortParams) msg(SetCommState FAIL) err( 31:A device attached to the system is not functioning.)
+				at com.engidea.win32jcom.WinjcomPort.nativeSetSerialPortParams(Native Method)
+				at com.engidea.win32jcom.WinjcomPort.setSerialPortParams(WinjcomPort.java:105)
+				at com.googlecode.jamr.App.start(App.java:37)
+				at com.googlecode.jamr.App.main(App.java:13)
+
+			((SerialPort)aPort).setSerialPortParams(9600,8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+		*/
 		serport = (SerialPort)aPort;
 
 		new Thread(new PortReader()).start();
