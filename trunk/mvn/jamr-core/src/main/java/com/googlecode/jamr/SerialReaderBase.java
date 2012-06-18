@@ -19,8 +19,6 @@
 
 package com.googlecode.jamr;
 
-//import gnu.io.*;
-
 abstract class SerialReaderBase {
 	private static org.slf4j.Logger log = org.slf4j.LoggerFactory
 			.getLogger(SerialReader.class);
@@ -28,9 +26,6 @@ abstract class SerialReaderBase {
 	private java.util.concurrent.BlockingQueue<String> blockingQueue;
 
 	private java.util.Hashtable<String, com.googlecode.jamr.model.EncoderReceiverTransmitterMessage> lastReading;
-
-	//protected java.io.InputStream in;
-	protected byte[] buffer = new byte[1024];
 
 	private java.util.regex.Pattern pattern = java.util.regex.Pattern
 			.compile("^\\$(.*)\\*(.*)\\r$");
@@ -42,7 +37,6 @@ abstract class SerialReaderBase {
 
 		PlugUtils pu = new PlugUtils();
 
-		//this.in = in;
 		blockingQueue = new java.util.concurrent.LinkedBlockingQueue<String>();
 		lastReading = new java.util.Hashtable<String, com.googlecode.jamr.model.EncoderReceiverTransmitterMessage>();
 
