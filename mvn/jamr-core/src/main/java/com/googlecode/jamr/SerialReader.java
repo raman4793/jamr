@@ -19,48 +19,36 @@
 
 package com.googlecode.jamr;
 
-import com.engidea.comm.*;
+import gnu.io.*;
 
-public class WinSerialReader extends SerialReaderBase
+public class SerialReader extends SerialReaderBase
 		implements
-			SerialPortEventListener,
-			Runnable {
+			SerialPortEventListener {
 	private static org.slf4j.Logger log = org.slf4j.LoggerFactory
-			.getLogger(WinSerialReader.class);
+			.getLogger(SerialReader.class);
 
-	private boolean running;
+	private java.io.InputStream in;
 
-	private SerialPort serport;
-
-	public WinSerialReader(SerialPort sp) {
+	public SerialReader(java.io.InputStream in) {
 		super();
-		this.serport = sp;
-		log.warn("WinSerialReader init");
-	}
-
-	public void setRunning(boolean r) {
-		log.warn("WinSerialReader setRunning");
-		this.running = r;
+		this.in = in;
+		log.trace("init");
 	}
 
 	public void serialEvent(SerialPortEvent arg0) {
-		log.info("Event: " + arg0);
-	}
+		int data;
+		byte[] buffer = new byte[1024];
 
-	public void run() {
-		log.warn("WinSerialReader run");
-		String line = "";
 		try {
-			byte[] buff = new byte[1];
-			while (serport.read(buff, 0, buff.length) > 0) {
-				if (buff[0] == '\n') {
-					doWork(line);
-					line = "";
-				} else {
-					line = line + new String(buff);
+			int len = 0;
+			while ((data = in.read()) > -1) {
+				if (data == '\n') {
+					break;
 				}
+				buffer[len++] = (byte) data;
 			}
-			log.info("Leaving while");
+			String line = new String(buffer, 0, len);
+			doWork(line);
 		} catch (Exception e) {
 			java.io.StringWriter sw = new java.io.StringWriter();
 			java.io.PrintWriter pw = new java.io.PrintWriter(sw);

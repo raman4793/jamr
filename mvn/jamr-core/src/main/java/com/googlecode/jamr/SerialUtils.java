@@ -74,6 +74,9 @@ public class SerialUtils {
 			com.engidea.comm.SerialPort serport = (com.engidea.comm.SerialPort) aPort;
 
 			sr = new WinSerialReader(serport);
+			((WinSerialReader) sr).setRunning(true);
+			Thread winThread = new Thread((WinSerialReader) sr);
+			winThread.start();
 
 			return true;
 		}
@@ -110,7 +113,6 @@ public class SerialUtils {
 		}
 		return true;
 	}
-
 	public String sendRawData(String data) {
 		sw.send(data + "\r\n");
 		return (sr.take());
