@@ -30,6 +30,10 @@ public class FusionTablesPlug implements com.googlecode.jamr.spi.Outlet {
 			ftc = new FusionTablesConfig();
 		}
 
+		if (ftc.getEmail() == null) {
+			return;
+		}
+
 		try {
 			postUrl = new java.net.URL(
 					"https://www.google.com/fusiontables/api/query?encid=true");
@@ -101,6 +105,10 @@ public class FusionTablesPlug implements com.googlecode.jamr.spi.Outlet {
 			com.googlecode.jamr.model.EncoderReceiverTransmitterMessage ert) {
 		String serial = ert.getSerial();
 		log.trace("received serial: " + serial);
+
+		if (service == null) {
+			return;
+		}
 
 		try {
 			com.google.gdata.client.Service.GDataRequest request = service
