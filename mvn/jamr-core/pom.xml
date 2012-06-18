@@ -22,6 +22,12 @@
     </dependency>
 
     <dependency>
+      <groupId>jcomport</groupId>
+      <artifactId>jcomport</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.neuronrobotics</groupId>
       <artifactId>nrjavaserial</artifactId>
       <version>3.7.5.1</version>

@@ -19,9 +19,9 @@
 
 package com.googlecode.jamr;
 
-import gnu.io.*;
+//import gnu.io.*;
 
-public class SerialReader implements SerialPortEventListener {
+abstract class SerialReaderBase {
 	private static org.slf4j.Logger log = org.slf4j.LoggerFactory
 			.getLogger(SerialReader.class);
 
@@ -29,20 +29,20 @@ public class SerialReader implements SerialPortEventListener {
 
 	private java.util.Hashtable<String, com.googlecode.jamr.model.EncoderReceiverTransmitterMessage> lastReading;
 
-	private java.io.InputStream in;
-	private byte[] buffer = new byte[1024];
+	//protected java.io.InputStream in;
+	protected byte[] buffer = new byte[1024];
 
 	private java.util.regex.Pattern pattern = java.util.regex.Pattern
 			.compile("^\\$(.*)\\*(.*)\\r$");
 
 	private Config jc;
 
-	public SerialReader(java.io.InputStream in) {
+	public SerialReaderBase() {
 		log.trace("init");
 
 		PlugUtils pu = new PlugUtils();
 
-		this.in = in;
+		//this.in = in;
 		blockingQueue = new java.util.concurrent.LinkedBlockingQueue<String>();
 		lastReading = new java.util.Hashtable<String, com.googlecode.jamr.model.EncoderReceiverTransmitterMessage>();
 
@@ -67,62 +67,45 @@ public class SerialReader implements SerialPortEventListener {
 		return lastReading;
 	}
 
-	public void serialEvent(SerialPortEvent arg0) {
-		int data;
+	public void doWork(String line) {
+		//log.trace( "-" + line + "-" );
+		java.util.regex.Matcher matcher = pattern.matcher(line);
+		if (matcher.matches()) {
+			String message = matcher.group(1);
+			String checksum = matcher.group(2);
+			log.debug("Match: " + message + " checksum: " + checksum);
 
-		try {
-			int len = 0;
-			while ((data = in.read()) > -1) {
-				if (data == '\n') {
-					break;
-				}
-				buffer[len++] = (byte) data;
-			}
-			String line = new String(buffer, 0, len);
-			//log.trace( "-" + line + "-" );
-			java.util.regex.Matcher matcher = pattern.matcher(line);
-			if (matcher.matches()) {
-				String message = matcher.group(1);
-				String checksum = matcher.group(2);
-				log.debug("Match: " + message + " checksum: " + checksum);
+			if (valid(message, checksum)) {
+				String parts[] = message.split(",");
+				String messageType = parts[0];
 
-				if (valid(message, checksum)) {
-					String parts[] = message.split(",");
-					String messageType = parts[0];
-
-					if ((messageType.equals("UMSCM"))
-							|| (messageType.equals("UMSCP"))) {
-						log.trace("UMS Message");
-						com.googlecode.jamr.model.StandardConsumptionMessage scm = new com.googlecode.jamr.model.StandardConsumptionMessage(
-								parts);
-						evaluateAndDeliver(scm);
-					} else if ((messageType.equals("UMIDM"))
-							|| (messageType.equals("UMIDP"))) {
-						log.warn("UMIDM and UMIDP not yet implemented");
-					} else {
-						// This must be a command response
-						log.trace("Command Response: " + message);
-						try {
-							blockingQueue.put(message);
-						} catch (java.lang.InterruptedException ie) {
-							java.io.StringWriter sw = new java.io.StringWriter();
-							java.io.PrintWriter pw = new java.io.PrintWriter(sw);
-							ie.printStackTrace(pw);
-							log.error(sw.toString());
-						}
-					}
-
+				if ((messageType.equals("UMSCM"))
+						|| (messageType.equals("UMSCP"))) {
+					log.trace("UMS Message");
+					com.googlecode.jamr.model.StandardConsumptionMessage scm = new com.googlecode.jamr.model.StandardConsumptionMessage(
+							parts);
+					evaluateAndDeliver(scm);
+				} else if ((messageType.equals("UMIDM"))
+						|| (messageType.equals("UMIDP"))) {
+					log.warn("UMIDM and UMIDP not yet implemented");
 				} else {
-					log.error("Checksum error: " + line);
+					// This must be a command response
+					log.trace("Command Response: " + message);
+					try {
+						blockingQueue.put(message);
+					} catch (java.lang.InterruptedException ie) {
+						java.io.StringWriter sw = new java.io.StringWriter();
+						java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+						ie.printStackTrace(pw);
+						log.error(sw.toString());
+					}
 				}
+
 			} else {
-				log.error("No match: " + line);
+				log.error("Checksum error: " + line);
 			}
-		} catch (Exception e) {
-			java.io.StringWriter sw = new java.io.StringWriter();
-			java.io.PrintWriter pw = new java.io.PrintWriter(sw);
-			e.printStackTrace(pw);
-			log.error(sw.toString());
+		} else {
+			log.error("No match: " + line);
 		}
 	}
 

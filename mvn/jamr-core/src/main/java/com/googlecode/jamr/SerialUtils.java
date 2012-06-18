@@ -30,10 +30,15 @@ public class SerialUtils {
 	private CommPort commPort;
 	private Thread serialWriter;
 
-	private SerialReader sr;
+	private SerialReaderBase sr;
 	private SerialWriter sw;
 
+	private String os;
+
 	private SerialUtils() {
+		log.debug("init");
+		os = System.getProperty("os.name");
+		log.debug("running on: " + os);
 	}
 
 	public static synchronized SerialUtils getInstance() {
@@ -58,6 +63,21 @@ public class SerialUtils {
 	}
 
 	public boolean connect(String portName) throws Exception {
+
+		if (os.equals("Windows 7")) {
+			log.debug("Going to use Winjcom");
+			com.engidea.comm.CommPortIdentifier portIdentifier = new com.engidea.win32jcom.WinjcomIdentifier(
+					0);
+			com.engidea.comm.CommPort aPort = portIdentifier
+					.getCommPort(portName);
+			aPort.open();
+			com.engidea.comm.SerialPort serport = (com.engidea.comm.SerialPort) aPort;
+
+			sr = new WinSerialReader(serport);
+
+			return true;
+		}
+
 		CommPortIdentifier portIdentifier = CommPortIdentifier
 				.getPortIdentifier(portName);
 		if (portIdentifier.isCurrentlyOwned()) {
@@ -81,7 +101,7 @@ public class SerialUtils {
 				serialWriter.start();
 
 				sr = new SerialReader(in);
-				serialPort.addEventListener(sr);
+				serialPort.addEventListener((SerialReader) sr);
 				serialPort.notifyOnDataAvailable(true);
 			} else {
 				log.error(commPort + " is not handled here");
