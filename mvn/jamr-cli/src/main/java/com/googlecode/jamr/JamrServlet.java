@@ -11,10 +11,14 @@ public class JamrServlet extends javax.servlet.http.HttpServlet {
 		log.trace("Executing INIT");
 
 		com.googlecode.jamr.PlugUtils pu = new com.googlecode.jamr.PlugUtils();
-		context = new org.springframework.context.support.FileSystemXmlApplicationContext(
-				"file:" + pu.getConfigPath() + "jdbc");
-		ds = (org.apache.commons.dbcp.BasicDataSource) context
-				.getBean("h2DataSource");
+
+		java.io.File config = new java.io.File(pu.getConfigPath() + "jdbc");
+		if (config.exists()) {
+			context = new org.springframework.context.support.FileSystemXmlApplicationContext(
+					"file:" + pu.getConfigPath() + "jdbc");
+			ds = (org.apache.commons.dbcp.BasicDataSource) context
+					.getBean("h2DataSource");
+		}
 	}
 
 	public void service(javax.servlet.http.HttpServletRequest request,
@@ -35,6 +39,11 @@ public class JamrServlet extends javax.servlet.http.HttpServlet {
 			long aft = new Long(after).longValue();
 			java.sql.Timestamp ts = new java.sql.Timestamp(aft);
 			andWhere = andWhere + " and recorded_at > '" + ts + "'";
+		}
+
+		if (context == null) {
+			log.info("No context");
+			return;
 		}
 
 		try {
