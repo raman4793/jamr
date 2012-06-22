@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.googlecode.jamr</groupId>
+		<artifactId>jamr-parent</artifactId>
+		<version>0.2</version>
+	</parent>
+
+        <artifactId>server-jetty</artifactId>
+	<packaging>jar</packaging>
+	<name>${artifactId}</name>
+	<version>0.2</version>
+
+	<dependencies>
+		<dependency>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-server</artifactId>
+                        <version>8.1.4.v20120524</version>
+			<scope>compile</scope>
+                </dependency>
+
+		<dependency>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-webapp</artifactId>
+                        <version>8.1.4.v20120524</version>
+                        <scope>compile</scope>
+                </dependency>
+	</dependencies>
+
+	<build>
+                <plugins>
+			<plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-compiler-plugin</artifactId>
+                                <configuration>
+                                        <source>1.5</source>
+                                        <target>1.5</target>
+                                </configuration>
+			</plugin>
+		</plugins>
+        </build>
+
+</project>
