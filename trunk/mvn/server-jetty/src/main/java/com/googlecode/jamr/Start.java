@@ -50,6 +50,8 @@ public class Start {
 		}
 
 		Server server = new Server();
+		jamr.setServer(server);
+
 		SocketConnector connector = new SocketConnector();
 
 		// Set some timeout options to make debugging easier.
@@ -69,9 +71,11 @@ public class Start {
 		server.setHandler(context);
 		try {
 			server.start();
-			System.in.read();
-			server.stop();
-			server.join();
+
+			Timer stopwatch = new Timer(jamr);
+			Thread go = new Thread(stopwatch);
+			go.start();
+
 		} catch (Exception e) {
 			java.io.StringWriter sw = new java.io.StringWriter();
 			java.io.PrintWriter pw = new java.io.PrintWriter(sw);
