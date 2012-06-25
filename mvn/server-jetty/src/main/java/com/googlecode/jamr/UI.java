@@ -1,6 +1,9 @@
 package com.googlecode.jamr;
 
 abstract class UI implements java.util.Observer {
+	private static org.slf4j.Logger log = org.slf4j.LoggerFactory
+			.getLogger(UI.class);
+
 	protected JamrModel jamr;
 	protected java.awt.Image image;
 	protected javax.swing.JMenuItem defaultItem;
@@ -18,8 +21,20 @@ abstract class UI implements java.util.Observer {
 	}
 
 	class UIActionListener implements java.awt.event.ActionListener {
+
 		public void actionPerformed(java.awt.event.ActionEvent e) {
 			if (e.getActionCommand().equals("Exit")) {
+
+				try {
+					jamr.getServer().stop();
+					jamr.getServer().join();
+				} catch (Exception exc) {
+					java.io.StringWriter sw = new java.io.StringWriter();
+					java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+					exc.printStackTrace(pw);
+					log.error(sw.toString());
+				}
+
 				System.exit(0);
 			}
 		}
