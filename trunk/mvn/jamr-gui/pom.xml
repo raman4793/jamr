@@ -20,6 +20,21 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.6</version>
+		</dependency>
+		<dependency>
+                        <groupId>ch.qos.logback</groupId>
+                        <artifactId>logback-core</artifactId>
+                        <version>1.0.6</version>
+                </dependency>
+		<dependency>
+                        <groupId>ch.qos.logback</groupId>
+                        <artifactId>logback-classic</artifactId>
+                        <version>1.0.6</version>
+                </dependency>
+		<dependency>
                         <groupId>com.googlecode.jamr</groupId>
                         <artifactId>server-jetty</artifactId>
                         <version>0.2</version>
@@ -136,6 +151,21 @@
 					</archive>
 					<packagingExcludes>WEB-INF/lib/jsf-api*.jar,WEB-INF/lib/jsf-impl*.jar,WEB-INF/lib/jetty*.jar,WEB-INF/lib/servlet*.jar,WEB-INF/lib/server*.jar</packagingExcludes>
 					<overlays>
+						<overlay>
+							<groupId>org.slf4j</groupId>
+							<artifactId>slf4j-api</artifactId>
+							<type>jar</type>
+						</overlay>
+						<overlay>
+                                                        <groupId>ch.qos.logback</groupId>
+                                                        <artifactId>logback-core</artifactId>
+                                                        <type>jar</type>
+                                                </overlay>
+						<overlay>
+							<groupId>ch.qos.logback</groupId>
+							<artifactId>logback-classic</artifactId>
+							<type>jar</type>
+						</overlay>
 						<overlay>
 							<groupId>com.googlecode.jamr</groupId>
 							<artifactId>server-jetty</artifactId>
